@@ -11,7 +11,6 @@
 
 ```
 pod 'StreetPass', :git => 'https://github.com/gupuru/StreetPassBLE-iOS.git'
-
 ```
 
 # 使い方
