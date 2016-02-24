@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		552F23591C7D3064006DCE69 /* StreetPassDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F23581C7D3064006DCE69 /* StreetPassDelegate.swift */; };
+		552F235B1C7D843E006DCE69 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F235A1C7D843E006DCE69 /* Settings.swift */; };
 		5531841A1C7BF3C90011D26D /* StreetPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 553184191C7BF3C90011D26D /* StreetPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		553184221C7BF3E40011D26D /* StreetPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553184211C7BF3E40011D26D /* StreetPass.swift */; };
 		5531842A1C7BF4300011D26D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553184291C7BF4300011D26D /* AppDelegate.swift */; };
@@ -53,6 +54,7 @@
 
 /* Begin PBXFileReference section */
 		552F23581C7D3064006DCE69 /* StreetPassDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreetPassDelegate.swift; sourceTree = "<group>"; };
+		552F235A1C7D843E006DCE69 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		553184161C7BF3C90011D26D /* StreetPass.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreetPass.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		553184191C7BF3C90011D26D /* StreetPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreetPass.h; sourceTree = "<group>"; };
 		5531841B1C7BF3C90011D26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				5531841B1C7BF3C90011D26D /* Info.plist */,
 				553184211C7BF3E40011D26D /* StreetPass.swift */,
 				552F23581C7D3064006DCE69 /* StreetPassDelegate.swift */,
+				552F235A1C7D843E006DCE69 /* Settings.swift */,
 			);
 			path = StreetPass;
 			sourceTree = "<group>";
@@ -292,6 +295,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				552F235B1C7D843E006DCE69 /* Settings.swift in Sources */,
 				552F23591C7D3064006DCE69 /* StreetPassDelegate.swift in Sources */,
 				553184221C7BF3E40011D26D /* StreetPass.swift in Sources */,
 			);
