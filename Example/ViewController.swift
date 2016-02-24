@@ -8,20 +8,31 @@
 
 import UIKit
 import StreetPass
+import CoreBluetooth
 
-class ViewController: UIViewController {
-
+class ViewController: UIViewController, StreetPassDelegate {
+    
+    private let street: StreetPass = StreetPass()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
-        StreetPass.start()
+        street.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-
-
+    
+    @IBAction func onTouchUpInsideStartButton(sender: UIButton) {
+        street.onStart()
+    }
+    
+    @IBAction func onTouchUpInsideStopButton(sender: UIButton) {
+        street.onStop()
+    }
+    
+    func bleDidUpdateState() {
+        print("よばれる")
+    }
 }
 
