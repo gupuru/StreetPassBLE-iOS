@@ -18,13 +18,27 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     private var characteristic = CBMutableCharacteristic!()
     
     public func onStart() {
-        self.centralManager = CBCentralManager(delegate: self, queue: nil)
-        self.peripheralManager = CBPeripheralManager(delegate: self, queue: nil, options: nil)
+        let centralQueue: dispatch_queue_t = dispatch_queue_create("com.gupuru.StreetPass.central", DISPATCH_QUEUE_SERIAL)
+        let peripheralQueue: dispatch_queue_t = dispatch_queue_create("com.gupuru.StreetPass.peripheral", DISPATCH_QUEUE_SERIAL)
+        let centralOptions: [String : AnyObject] = [
+            CBCentralManagerOptionRestoreIdentifierKey : "com.gupuru.StreetPass.central.restore"
+        ]
+        let peripheralOptions: [String : AnyObject] = [
+            CBCentralManagerOptionRestoreIdentifierKey : "com.gupuru.StreetPass.peripheral.restore"
+        ]
+        self.centralManager = CBCentralManager(delegate: self, queue: centralQueue, options: centralOptions)
+        self.peripheralManager = CBPeripheralManager(delegate: self, queue: peripheralQueue, options: peripheralOptions)
     }
     
     public func onStop() {
-        self.centralManager.stopScan()
-        self.peripheralManager.stopAdvertising()
+        if let central = self.centralManager {
+            central.stopScan()
+            self.centralManager = nil
+        }
+        if let peripheral = self.peripheralManager {
+            peripheral.stopAdvertising()
+            self.peripheralManager = nil
+        }
     }
     
     /**
@@ -47,9 +61,17 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
             print("[DEBUG] Central manager state: Powered off")
         case .PoweredOn:
             print("[DEBUG] Central manager state: Powered on")
-            self.centralManager.scanForPeripheralsWithServices(nil, options: nil)
+            
+            let serviceUUIDs: [CBUUID] = [CBUUID(string: Settings.UUID().service)]
+            let options: [String : Bool] = [CBCentralManagerScanOptionAllowDuplicatesKey : Settings.ScanOptions().allowDuplicates]
+            self.centralManager.scanForPeripheralsWithServices(serviceUUIDs, options: options)
         }
         self.delegate?.bleDidUpdateState()
+    }
+    
+    public func centralManager(central: CBCentralManager, willRestoreState dict: [String : AnyObject]) {
+        print("復元しただがや")
+        
     }
     
     /**
@@ -62,6 +84,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
      */
     public func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         print(peripheral)
+        
 //        self.peripheral = peripheral
 //        self.centralManager.connectPeripheral(self.peripheral, options: nil)
     }
@@ -75,8 +98,9 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     public func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
         print("接続成功")
         print(peripheral)
+        let serviceUUIDs: [CBUUID] = [CBUUID(string: Settings.UUID().service)]
         peripheral.delegate = self
-        peripheral.discoverServices(nil)
+        peripheral.discoverServices(serviceUUIDs)
         //接続きるよ
 //        centralManager.cancelPeripheralConnection(peripheral)
     }
@@ -103,6 +127,21 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         print("接続失敗")
     }
     
+    public func peripheralManager(peripheral: CBPeripheralManager, willRestoreState dict: [String : AnyObject]) {
+        print("復活だがやあああああああああああああ")
+        
+        // Notificationの生成する.
+        let myNotification: UILocalNotification = UILocalNotification()
+        // メッセージを代入する.
+        myNotification.alertBody = "復活"
+        myNotification.fireDate = NSDate(timeIntervalSinceNow: 1)
+        // Timezoneを設定をする.
+        myNotification.timeZone = NSTimeZone.defaultTimeZone()
+        // Notificationを表示する.
+        UIApplication.sharedApplication().scheduleLocalNotification(myNotification)
+
+    }
+    
     /**
      serviceが見つかったら、よばれる
      
@@ -114,9 +153,10 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         if services.count > 0 {
             print("なんこあるの \(services.count)")
         }
+        let characteristicsUUIDs: [CBUUID] = [CBUUID(string: Settings.UUID().characteristic)]
         for obj in services {
             if let service = obj as? CBService {
-                peripheral.discoverCharacteristics(nil, forService: service)
+                peripheral.discoverCharacteristics(characteristicsUUIDs, forService: service)
             }
         }
     }
@@ -242,7 +282,4 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         
     }
 
-    
-    
-    
 }
