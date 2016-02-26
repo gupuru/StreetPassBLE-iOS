@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		552F23591C7D3064006DCE69 /* StreetPassDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F23581C7D3064006DCE69 /* StreetPassDelegate.swift */; };
-		552F235B1C7D843E006DCE69 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F235A1C7D843E006DCE69 /* Settings.swift */; };
+		552F235B1C7D843E006DCE69 /* StreetPassSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 552F235A1C7D843E006DCE69 /* StreetPassSettings.swift */; };
 		5531841A1C7BF3C90011D26D /* StreetPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 553184191C7BF3C90011D26D /* StreetPass.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		553184221C7BF3E40011D26D /* StreetPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553184211C7BF3E40011D26D /* StreetPass.swift */; };
 		5531842A1C7BF4300011D26D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 553184291C7BF4300011D26D /* AppDelegate.swift */; };
@@ -19,6 +19,7 @@
 		5531843F1C7BF4300011D26D /* ExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5531843E1C7BF4300011D26D /* ExampleUITests.swift */; };
 		553184471C7BF4420011D26D /* StreetPass.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 553184161C7BF3C90011D26D /* StreetPass.framework */; };
 		553184481C7BF4420011D26D /* StreetPass.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 553184161C7BF3C90011D26D /* StreetPass.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		55411A5F1C7EDF69005C78C6 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55411A5E1C7EDF69005C78C6 /* Manager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,7 +55,7 @@
 
 /* Begin PBXFileReference section */
 		552F23581C7D3064006DCE69 /* StreetPassDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreetPassDelegate.swift; sourceTree = "<group>"; };
-		552F235A1C7D843E006DCE69 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		552F235A1C7D843E006DCE69 /* StreetPassSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreetPassSettings.swift; sourceTree = "<group>"; };
 		553184161C7BF3C90011D26D /* StreetPass.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreetPass.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		553184191C7BF3C90011D26D /* StreetPass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreetPass.h; sourceTree = "<group>"; };
 		5531841B1C7BF3C90011D26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -69,6 +70,7 @@
 		5531843A1C7BF4300011D26D /* ExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5531843E1C7BF4300011D26D /* ExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleUITests.swift; sourceTree = "<group>"; };
 		553184401C7BF4300011D26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		55411A5E1C7EDF69005C78C6 /* Manager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,7 +126,8 @@
 				5531841B1C7BF3C90011D26D /* Info.plist */,
 				553184211C7BF3E40011D26D /* StreetPass.swift */,
 				552F23581C7D3064006DCE69 /* StreetPassDelegate.swift */,
-				552F235A1C7D843E006DCE69 /* Settings.swift */,
+				552F235A1C7D843E006DCE69 /* StreetPassSettings.swift */,
+				55411A5E1C7EDF69005C78C6 /* Manager.swift */,
 			);
 			path = StreetPass;
 			sourceTree = "<group>";
@@ -295,9 +298,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				552F235B1C7D843E006DCE69 /* Settings.swift in Sources */,
+				552F235B1C7D843E006DCE69 /* StreetPassSettings.swift in Sources */,
 				552F23591C7D3064006DCE69 /* StreetPassDelegate.swift in Sources */,
 				553184221C7BF3E40011D26D /* StreetPass.swift in Sources */,
+				55411A5F1C7EDF69005C78C6 /* Manager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

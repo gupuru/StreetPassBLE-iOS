@@ -8,6 +8,12 @@
 
 import Foundation
 
-public protocol StreetPassDelegate {
-    func bleDidUpdateState()
+@objc public protocol StreetPassDelegate {
+    func streetPassError(error : NSError)
+    func receivingDevices(deveiceInfo : DeveiceInfo)
+    optional func centralManagerState(state : CentralManagerState)
+    optional func peripheralManagerState(state : PeripheralManagerState)
+    optional func advertisingState()
+    optional func peripheralDidAddService()
+    optional func deviceConnectedState(connectedDeviceInfo : ConnectedDeviceInfo)
 }
