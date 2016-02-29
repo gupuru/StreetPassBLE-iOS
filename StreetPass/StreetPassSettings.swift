@@ -7,20 +7,22 @@
 //
 
 import Foundation
+import CoreBluetooth
 
 public class StreetPassSettings {
     
-    private var _serviceUUID : String = "0000180a-0000-1000-8000-00805f9b34fb"
-    private var _characteristicUUID : String = "00002a29-0000-1000-8000-00805f9b34fb"
-    private var _allowDuplicates : Bool = false
-    private var _initData : String = "spb"
-    private var _advertisementDataLocalNameKey : String = "iOS"
-    private var _isConnect : Bool = false
+    private var _serviceUUID: [CBUUID] = [CBUUID(string: "0000180A-0000-1000-8000-00805F9B34FB")]
+    private var _characteristicUUID: [CBUUID] = [CBUUID(string: "00002A29-0000-1000-8000-00805F9B34FB")]
+    private var _allowDuplicates: Bool = false
+    private var _initData: String = "spb"
+    private var _sendData: String = ""
+    private var _advertisementDataLocalNameKey: String = "iOS"
+    private var _isConnect: Bool = false
 
     public init() {
     }
     
-    var serviceUUID : String {
+    var serviceUUID : [CBUUID] {
         get {
             return _serviceUUID
         }
@@ -30,7 +32,7 @@ public class StreetPassSettings {
         }
     }
     
-    var characteristicUUID : String {
+    var characteristicUUID : [CBUUID] {
         get {
             return _characteristicUUID
         }
@@ -47,6 +49,16 @@ public class StreetPassSettings {
         
         set(allowDuplicates) {
             _allowDuplicates = allowDuplicates
+        }
+    }
+    
+    var sendData : String {
+        get {
+            return _sendData
+        }
+        
+        set(sendData) {
+            _sendData = sendData
         }
     }
     
@@ -81,12 +93,16 @@ public class StreetPassSettings {
     }
     
     public func serviceUUID(serviceUUID : String) -> Self {
-        self.serviceUUID = serviceUUID
+        self.serviceUUID = [
+            CBUUID(string: serviceUUID)
+        ]
         return self
     }
     
     public func characteristicUUID(characteristicUUID : String) -> Self {
-        self.characteristicUUID = characteristicUUID
+        self.characteristicUUID = [
+            CBUUID(string: characteristicUUID)
+        ]
         return self
     }
     
@@ -96,7 +112,12 @@ public class StreetPassSettings {
     }
     
     public func initData(initData : String) -> Self {
-        self.initData = initData
+        self.initData = splitData(initData)
+        return self
+    }
+    
+    public func sendData(sendData : String) -> Self {
+        self.sendData = splitData(sendData)
         return self
     }
     
@@ -108,6 +129,20 @@ public class StreetPassSettings {
     public func isConnect(isConnect : Bool) -> Self {
         self.isConnect = isConnect
         return self
+    }
+    
+    /**
+     文字バイト数が100を変えた場合、切り出す
+     
+     - parameter data: 送信データ
+     
+     - returns: 切り出し文字
+     */
+    private func splitData(data: String) -> String {
+        if (data.utf16).count > 100 {
+            return (data as NSString).substringWithRange(NSRange(location: 0, length: 96))
+        }
+        return data
     }
     
 }

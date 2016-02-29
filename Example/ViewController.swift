@@ -9,22 +9,25 @@
 import UIKit
 import StreetPass
 
-class ViewController: UIViewController, StreetPassDelegate, UITableViewDataSource, UITableViewDelegate {
+class ViewController: UIViewController, StreetPassDelegate, UITextFieldDelegate {
     
-    @IBOutlet weak var centralStatusUiLabel: UILabel!
-    @IBOutlet weak var peripheralUiLabel: UILabel!
-    @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var advertisingStatusUiLabel: UILabel!
-    @IBOutlet weak var messageUiLabel: UILabel!
+    @IBOutlet weak var nameTextField: UITextField!
+    @IBOutlet weak var logTextView: UITextView!
+    @IBOutlet weak var stopUiButton: UIButton!
+    @IBOutlet weak var startUIButton: UIButton!
     
     private var deviceInfo : [String] = []
     private let street: StreetPass = StreetPass()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // アラート表示の許可をもらう.
+        let setting = UIUserNotificationSettings(forTypes: [.Sound, .Alert], categories: nil)
+        UIApplication.sharedApplication().registerUserNotificationSettings(setting)
+        
         street.delegate = self
-        tableView.delegate = self
-        tableView.dataSource = self
+        nameTextField.delegate = self
     }
     
     override func didReceiveMemoryWarning() {
@@ -32,28 +35,48 @@ class ViewController: UIViewController, StreetPassDelegate, UITableViewDataSourc
     }
     
     @IBAction func onTouchUpInsideStartButton(sender: UIButton) {
+        
+        var sendData: String = ""
+        if nameTextField.text != nil {
+            sendData = nameTextField.text!
+        }
+        
+        startUIButton.enabled = false
+        stopUiButton.enabled = true
+        
         let streetPassSettings: StreetPassSettings = StreetPassSettings()
+            .initData("108762")
+            .sendData(sendData)
             .allowDuplicates(false)
             .isConnect(true)
         street.start(streetPassSettings)
-        centralStatusUiLabel.text = "ready..."
-        peripheralUiLabel.text = "ready..."
+        setLogText("")
+        setLogText("Start StreetPass")
     }
     
     @IBAction func onTouchUpInsideStopButton(sender: UIButton) {
         street.stop()
         deviceInfo.removeAll()
-        tableView.reloadData()
-        centralStatusUiLabel.text = "Status"
-        peripheralUiLabel.text = "Status"
+        startUIButton.enabled = true
+        stopUiButton.enabled = true
+        setLogText("Stop StreetPass")
+    }
+    
+    private func setLogText(text: String) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            let log: String = self.logTextView.text
+            dispatch_async(dispatch_get_main_queue()) {
+                self.logTextView.text = log + text + "\n"
+            }
+        }
     }
     
     func centralManagerState(state: CentralManagerState) {
         switch state {
         case .PoweredOn:
-            centralStatusUiLabel.text = "OK"
+            setLogText("Start central manager")
         default:
-            centralStatusUiLabel.text = "NG"
+            setLogText("Failure central manager")
             break
         }
     }
@@ -61,61 +84,61 @@ class ViewController: UIViewController, StreetPassDelegate, UITableViewDataSourc
     func peripheralManagerState(state: PeripheralManagerState) {
         switch state {
         case .PoweredOn:
-            peripheralUiLabel.text = "OK"
+            setLogText("Start peripheral manager")
             break
         default:
-            peripheralUiLabel.text = "NG"
+            setLogText("Failure peripheral manager")
             break
         }
     }
     
     func advertisingState() {
-        advertisingStatusUiLabel.text = "Now, Advertising"
+        setLogText("Now, Advertising")
     }
     
     func peripheralDidAddService() {
-        messageUiLabel.text = "Service Starting"
+        setLogText("Start Service")
     }
     
     func deviceConnectedState(connectedDeviceInfo : ConnectedDeviceInfo) {
         switch connectedDeviceInfo.status {
         case .Success:
-            messageUiLabel.text = "Connect Success"
+            setLogText("Success Device Connect")
         case .DisConected:
-            messageUiLabel.text = "DisConnect"
+            setLogText("DisConnect Device")
         case .Failure:
-            messageUiLabel.text = "Connect Failer"
+            setLogText("Connect Failer")
         }
     }
 
     func streetPassError(error: NSError) {
-        messageUiLabel.text = error.localizedDescription
+        setLogText("error.localizedDescription")
     }
     
-    func receivingDevices(deveiceInfo: DeveiceInfo) {
+    func nearByDevices(deveiceInfo: DeveiceInfo) {
         deviceInfo.append(deveiceInfo.deviceName)
-        tableView.reloadData()
+        setLogText("Near by device: \(deveiceInfo.deviceName)")
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if deviceInfo.isEmpty {
-            return 0
-        }
-        return deviceInfo.count
+    func receivedData(receivedData: ReceivedData) {
+        setLogText("Receive Data: \(receivedData.data)")
+        
+        // Notificationの生成する.
+        let myNotification: UILocalNotification = UILocalNotification()
+        // メッセージを代入する.
+        myNotification.alertBody = "復活"
+        myNotification.fireDate = NSDate(timeIntervalSinceNow: 1)
+        // Timezoneを設定をする.
+        myNotification.timeZone = NSTimeZone.defaultTimeZone()
+        // Notificationを表示する.
+        UIApplication.sharedApplication().scheduleLocalNotification(myNotification)
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "Cell")
-        if !deviceInfo.isEmpty {
-            cell.textLabel?.text = deviceInfo[indexPath.row]
-        }
-        return cell
+    func textFieldShouldReturn(textField: UITextField) -> Bool{
+        // キーボード閉じる
+        textField.resignFirstResponder()
+        return true
     }
-    
-    func tableView(table: UITableView, didSelectRowAtIndexPath indexPath:NSIndexPath) {
-        self.tableView.deselectRowAtIndexPath(indexPath, animated:true)
-        print(deviceInfo[indexPath.row])
-    }
-    
+
 }
 

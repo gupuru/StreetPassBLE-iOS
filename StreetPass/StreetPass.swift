@@ -81,23 +81,31 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         switch central.state {
         case .PoweredOn:
             if let setting = self.streetPassSettings {
-                let serviceUUIDs: [CBUUID] = [
-                    CBUUID(string: setting.serviceUUID)
-                ]
                 let options: [String : Bool] = [
                     CBCentralManagerScanOptionAllowDuplicatesKey : setting.allowDuplicates
                 ]
                 //scan開始
-                self.centralManager.scanForPeripheralsWithServices(serviceUUIDs, options: options)
+                self.centralManager.scanForPeripheralsWithServices(setting.serviceUUID, options: options)
             }
         default:
             break
         }
     }
     
+    /**
+     復元
+     
+     - parameter central: <#central description#>
+     - parameter dict:    <#dict description#>
+     */
     public func centralManager(central: CBCentralManager, willRestoreState dict: [String : AnyObject]) {
-        print("復元しただがや")
-        
+        // 復元された、接続を試みている、あるいは接続済みのペリフェラル
+        if let peripherals: [CBPeripheral] = dict[CBCentralManagerRestoredStatePeripheralsKey] as! [CBPeripheral]! {
+            // プロパティに保持しなおす
+            for aPeripheral in peripherals {
+                aPeripheral.delegate = self
+            }
+        }
     }
     
     /**
@@ -116,7 +124,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
             deviceInfo.advertisementData = advertisementData
             deviceInfo.RSSI = RSSI
             
-            delegate.receivingDevices(deviceInfo)
+            delegate.nearByDevices(deviceInfo)
             
         }
         if let setting = self.streetPassSettings {
@@ -148,12 +156,9 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
             if let _ = delegate.deviceConnectedState?(connectedDeviceInfo){}
         }
         if let setting = self.streetPassSettings {
-            let serviceUUIDs: [CBUUID] = [CBUUID(string: setting.serviceUUID)]
             peripheral.delegate = self
-            peripheral.discoverServices(serviceUUIDs)
+            peripheral.discoverServices(setting.serviceUUID)
         }
-        //接続きるよ
-        //        centralManager.cancelPeripheralConnection(peripheral)
     }
     
     /**
@@ -188,19 +193,26 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         }
     }
     
+    /**
+     復元
+     
+     - parameter peripheral: <#peripheral description#>
+     - parameter dict:       <#dict description#>
+     */
     public func peripheralManager(peripheral: CBPeripheralManager, willRestoreState dict: [String : AnyObject]) {
-        print("復活だがやあああああああああああああ")
-        
-        // Notificationの生成する.
-        let myNotification: UILocalNotification = UILocalNotification()
-        // メッセージを代入する.
-        myNotification.alertBody = "復活"
-        myNotification.fireDate = NSDate(timeIntervalSinceNow: 1)
-        // Timezoneを設定をする.
-        myNotification.timeZone = NSTimeZone.defaultTimeZone()
-        // Notificationを表示する.
-        UIApplication.sharedApplication().scheduleLocalNotification(myNotification)
-        
+        if let setting = self.streetPassSettings {
+            // 復元された登録済みサービス
+            if let services: [CBMutableService] = dict[CBPeripheralManagerRestoredStateServicesKey] as! [CBMutableService]! {
+                // プロパティにセットしなおす
+                for service in services {
+                    for aCharacteristic in service.characteristics! {
+                        if aCharacteristic.isEqual(setting.characteristicUUID) {
+                            self.characteristic = aCharacteristic as! CBMutableCharacteristic
+                        }
+                    }
+                }
+            }
+        }
     }
     
     /**
@@ -212,11 +224,11 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     public func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
         if let setting = streetPassSettings {
             if let services : [CBService] = peripheral.services {
-                let characteristicsUUIDs: [CBUUID] = [
-                    CBUUID(string: setting.characteristicUUID)
-                ]
                 for obj in services {
-                    peripheral.discoverCharacteristics(characteristicsUUIDs, forService: obj)
+                    if obj.UUID.isEqual(setting.serviceUUID[0]) {
+                        peripheral.discoverCharacteristics(setting.characteristicUUID, forService: obj)
+                        break
+                    }
                 }
             }
         }
@@ -225,23 +237,66 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     /**
      characteristicsが見つかったら、呼ばれるよ
      
-     - parameter peripheral: <#peripheral description#>
-     - parameter service:    <#service description#>
-     - parameter error:      <#error description#>
+     - parameter peripheral: peripheral description
+     - parameter service:    service description
+     - parameter error:      error description
      */
     public func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
-        if let characteristics : [CBCharacteristic] = service.characteristics {
-            for obj in characteristics {
-                if obj.properties == CBCharacteristicProperties.Read {
-                    peripheral.readValueForCharacteristic(obj)
+        if let setting = streetPassSettings {
+            if let characteristics : [CBCharacteristic] = service.characteristics {
+                for obj in characteristics {
+                    if obj.UUID.isEqual(setting.characteristicUUID[0]) {
+                        //現在値を読み込む
+                        peripheral.readValueForCharacteristic(obj)
+                    }
                 }
             }
         }
     }
     
+    /**
+     characteristicが読み込まれるとここがよばれる
+     
+     - parameter peripheral:     <#peripheral description#>
+     - parameter characteristic: <#characteristic description#>
+     - parameter error:          <#error description#>
+     */
     public func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
-        print("ここよばれる")
-        print("読込成功だよん\(characteristic.service.UUID)  \(characteristic.value)")
+        
+        if error != nil {
+            if let delegate = self.delegate {
+                delegate.streetPassError(error!)
+            }
+            return
+        }
+        
+        if let delegate = self.delegate {
+            if let data = characteristic.value {
+                //値読込
+                let out: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
+                let receivedData: ReceivedData = ReceivedData()
+                receivedData.peripheral = peripheral
+                receivedData.data = out
+                delegate.receivedData(receivedData)
+            }
+        }
+        
+        if let setting = streetPassSettings {
+            //送信
+            writeData(setting.sendData, periperal: peripheral)
+        }
+    }
+    
+    /**
+     write完了するとここがよばれる
+     
+     - parameter peripheral:     <#peripheral description#>
+     - parameter characteristic: <#characteristic description#>
+     - parameter error:          <#error description#>
+     */
+    public func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
+        //接続切断
+        centralManager.cancelPeripheralConnection(peripheral)
     }
     
     /**
@@ -276,11 +331,9 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         case .PoweredOn:
             if let setting = self.streetPassSettings {
                 
-                let serviceUUID = CBUUID(string: setting.serviceUUID)
-                let service = CBMutableService(type: serviceUUID, primary: true)
-                let characteristicsUUID = CBUUID(string: setting.characteristicUUID)
+                let service = CBMutableService(type: setting.serviceUUID[0], primary: true)
                 let characteristic = CBMutableCharacteristic(
-                    type: characteristicsUUID,
+                    type: setting.characteristicUUID[0],
                     properties: [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write],
                     value: nil,
                     permissions: [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
@@ -292,10 +345,9 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
                 characteristic.value = initData
                 self.characteristic = characteristic
                 
-                let serviceAdvertiseUUID = [CBUUID(string: setting.serviceUUID)]
                 let advertiseData: [String : AnyObject] = [
                     CBAdvertisementDataLocalNameKey: setting.advertisementDataLocalNameKey,
-                    CBAdvertisementDataServiceUUIDsKey: serviceAdvertiseUUID
+                    CBAdvertisementDataServiceUUIDsKey: setting.serviceUUID
                 ]
                 
                 self.peripheralManager.startAdvertising(advertiseData)
@@ -324,53 +376,46 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         }
     }
     
-    private func writeDara(data: String, periperal: CBPeripheral) {
-        
-        
-        if let characteristics : [CBCharacteristic] = service.characteristics {
-            for obj in characteristics {
-                if obj.properties == CBCharacteristicProperties.Read {
-                    peripheral.readValueForCharacteristic(obj)
+    public func writeData(data: String, periperal: CBPeripheral) {
+        if let sendData: NSData = data.dataUsingEncoding(NSUTF8StringEncoding) {
+            if let services : [CBService] = peripheral.services {
+                for service in services {
+                    if let characteristics: [CBCharacteristic] = service.characteristics {
+                        for characteristic in characteristics {
+                            if characteristic.UUID.isEqual(self.characteristic.UUID) {
+                                peripheral.writeValue(
+                                    sendData,
+                                    forCharacteristic: characteristic,
+                                    type: CBCharacteristicWriteType.WithResponse
+                                )
+                            }
+                        }
+                    }
                 }
-                
-        
-        
-        
-        
-        for obj in peripheral.services! {
-            
+            }
         }
     }
     
     public func peripheralManager(peripheral: CBPeripheralManager, didReceiveReadRequest request: CBATTRequest) {
-        print("へーい、read来たぜ、ぐへへへ \(request.characteristic.UUID) \(request.characteristic.value)")
-        if let data = request.characteristic.value {
-            let out: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
-            print(out)
-        }
-        
-        if request.characteristic.UUID.isEqual(self.characteristic.UUID) {
-            print("ほほほほほ")
-            request.value = self.characteristic.value
-            self.peripheralManager.respondToRequest(
-                request,
-                withResult: CBATTError.Success
-            )
-        }
-        
+        request.value = self.characteristic.value
+        self.peripheralManager.respondToRequest(
+            request,
+            withResult: CBATTError.Success
+        )
     }
     
     public func peripheralManager(peripheral: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
-        print("write件数\(requests.count)")
         
         for obj in requests {
             if let request = obj as CBATTRequest! {
-                if request.characteristic.UUID.isEqual(self.characteristic.UUID) {
-                    print("ふええええ")
-                    self.characteristic.value = request.value
-                    if let data = obj.characteristic.value {
-                        let out: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
-                        print(out)
+                self.characteristic.value = request.value
+                if let data = obj.characteristic.value {
+                    let out: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
+                    if let delegate = self.delegate {
+                        //値読込
+                        let receivedData: ReceivedData = ReceivedData()
+                        receivedData.data = out
+                        delegate.receivedData(receivedData)
                     }
                 }
             }

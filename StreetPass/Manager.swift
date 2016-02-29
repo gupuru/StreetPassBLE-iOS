@@ -39,6 +39,43 @@ import CoreBluetooth
     
 }
 
+/**
+ 受信した情報
+ */
+@objc public class ReceivedData : NSObject {
+    
+    var _data : String?
+    var _peripheral : CBPeripheral?
+    
+    public override init() {
+        super.init()
+    }
+    
+    public var data: String {
+        get {
+            return _data!
+        }
+        
+        set(data) {
+            _data = data
+        }
+    }
+    
+    public var peripheral : CBPeripheral {
+        get {
+            return _peripheral!
+        }
+        
+        set(peripheral) {
+            _peripheral = peripheral
+        }
+    }
+    
+}
+
+/**
+ 接続した端末情報
+ */
 @objc public class ConnectedDeviceInfo : NSObject {
     
     var _status : ConnectedDeviceStatus?
@@ -70,6 +107,9 @@ import CoreBluetooth
     
 }
 
+/**
+ 端末情報
+ */
 @objc public class DeveiceInfo: NSObject {
     
     var _peripheral : CBPeripheral?
