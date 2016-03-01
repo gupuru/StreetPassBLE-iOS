@@ -18,6 +18,8 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     private var peripheral: CBPeripheral!
     private var characteristic = CBMutableCharacteristic!()
     
+    //MARK: - init
+    
     /**
      開始
      */
@@ -27,9 +29,9 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     }
     
     /**
-     設定値ありの開始
+      開始(設定値あり)
      
-     - parameter streetPassSettings: <#streetPassSettings description#>
+     - parameter streetPassSettings: scanやadvertiseの設定値
      */
     public func start(streetPassSettings: StreetPassSettings) {
         self.streetPassSettings = streetPassSettings
@@ -39,7 +41,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     /**
      central, peripheralの初期化
      
-     - returns: <#return value description#>
+     - returns: なし
      */
     private func initBLE() {
         let centralQueue: dispatch_queue_t = dispatch_queue_create("com.gupuru.StreetPass.central", DISPATCH_QUEUE_SERIAL)
@@ -69,11 +71,11 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         }
     }
     
+    //MARK: - CBCentralManagerDelegate
+    
     /**
-     scanのステータス
-     
-     - parameter central: <#central description#>
-     */
+     scanステータス
+    */
     public func centralManagerDidUpdateState(central: CBCentralManager) {
         if let delegate = self.delegate {
             CentralManager().setCentralState(delegate, central: central)
@@ -93,10 +95,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     }
     
     /**
-     復元
-     
-     - parameter central: <#central description#>
-     - parameter dict:    <#dict description#>
+     CentralManager復元(アプリケーション復元時に呼ばれる)
      */
     public func centralManager(central: CBCentralManager, willRestoreState dict: [String : AnyObject]) {
         // 復元された、接続を試みている、あるいは接続済みのペリフェラル
@@ -109,12 +108,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     }
     
     /**
-     受信したらここよばれる
-     
-     - parameter central:           central description
-     - parameter peripheral:        <#peripheral description#>
-     - parameter advertisementData: <#advertisementData description#>
-     - parameter RSSI:              <#RSSI description#>
+     受信したとき
      */
     public func centralManager(central: CBCentralManager, didDiscoverPeripheral peripheral: CBPeripheral, advertisementData: [String : AnyObject], RSSI: NSNumber) {
         if let delegate = self.delegate {
@@ -136,17 +130,14 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
                     CBConnectPeripheralOptionNotifyOnDisconnectionKey: false,
                     CBConnectPeripheralOptionNotifyOnNotificationKey: false,
                 ]
-                //端末に接続
+                //発見したペリフェラルへの接続を開始
                 self.centralManager.connectPeripheral(self.peripheral, options: connectPeripheralOptions)
             }
         }
     }
     
     /**
-     端末に接続したらここよばれる
-     
-     - parameter central:    <#central description#>
-     - parameter peripheral: <#peripheral description#>
+     ペリフェラルに接続したとき
      */
     public func centralManager(central: CBCentralManager, didConnectPeripheral peripheral: CBPeripheral) {
         if let delegate = self.delegate {
@@ -156,17 +147,15 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
             if let _ = delegate.deviceConnectedState?(connectedDeviceInfo){}
         }
         if let setting = self.streetPassSettings {
+            //サービス探索のためのdelegate
             peripheral.delegate = self
+            //サービス探索開始
             peripheral.discoverServices(setting.serviceUUID)
         }
     }
     
     /**
-     接続が切れた場合はここ
-     
-     - parameter central:    <#central description#>
-     - parameter peripheral: <#peripheral description#>
-     - parameter error:      <#error description#>
+     ペリフェラルから切れたとき
      */
     public func centralManager(central: CBCentralManager, didDisconnectPeripheral peripheral: CBPeripheral, error: NSError?) {
         if let delegate = self.delegate {
@@ -178,11 +167,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     }
     
     /**
-     端末の接続に失敗したらここよばれる
-     
-     - parameter central:    <#central description#>
-     - parameter peripheral: <#peripheral description#>
-     - parameter error:      <#error description#>
+     ペリフェラルの接続に失敗したとき
      */
     public func centralManager(central: CBCentralManager, didFailToConnectPeripheral peripheral: CBPeripheral, error: NSError?) {
         if let delegate = self.delegate {
@@ -193,11 +178,10 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         }
     }
     
+    //MARK: - CBPeripheralManagerDelegate
+    
     /**
-     復元
-     
-     - parameter peripheral: <#peripheral description#>
-     - parameter dict:       <#dict description#>
+     peripheral 復元時に呼ばれる
      */
     public func peripheralManager(peripheral: CBPeripheralManager, willRestoreState dict: [String : AnyObject]) {
         if let setting = self.streetPassSettings {
@@ -216,15 +200,120 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     }
     
     /**
-     serviceが見つかったら、よばれる
-     
-     - parameter peripheral: <#peripheral description#>
-     - parameter error:      <#error description#>
+     peripheralのserviceに追加時に呼ばれる
      */
+    public func peripheralManager(peripheral: CBPeripheralManager, didAddService service: CBService, error: NSError?) {
+        if error != nil {
+            if let delegate = self.delegate {
+                delegate.streetPassError(error!)
+            }
+            return
+        }
+        if let delegate = self.delegate {
+            if let _ = delegate.peripheralDidAddService?() {}
+        }
+    }
+    
+    /**
+     peripheral managerの状態変化
+     */
+    public func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
+        if let delegate = self.delegate {
+            CentralManager().setPeripheralState(delegate, peripheral: peripheral)
+        }
+        switch peripheral.state {
+        case .PoweredOn:
+            if let setting = self.streetPassSettings {
+                let service = CBMutableService(type: setting.serviceUUID[0], primary: true)
+                let characteristic = CBMutableCharacteristic(
+                    type: setting.characteristicUUID[0],
+                    properties: [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write],
+                    value: nil,
+                    permissions: [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
+                )
+                service.characteristics = [characteristic]
+                self.peripheralManager.addService(service)
+                //初期値
+                if let data = setting.initData {
+                    let initData: NSData! = data.dataUsingEncoding(NSUTF8StringEncoding)
+                    characteristic.value = initData
+                }
+                //characteristic更新
+                self.characteristic = characteristic
+                //service uuid, name keyの追加
+                let advertiseData: [String : AnyObject] = [
+                    CBAdvertisementDataLocalNameKey: setting.advertisementDataLocalNameKey,
+                    CBAdvertisementDataServiceUUIDsKey: setting.serviceUUID
+                ]
+                //Advertising開始
+                self.peripheralManager.startAdvertising(advertiseData)
+            }
+        default:
+            break
+        }
+    }
+    
+    /**
+     Advertisingが開始したときに呼ばれる
+     */
+    @objc public func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager, error: NSError?) {
+        if error != nil {
+            //Advertising失敗
+            if let delegate = self.delegate {
+                delegate.streetPassError(error!)
+            }
+            return
+        }
+        if let delegate = self.delegate {
+            //Advertising成功
+            if let _ = delegate.advertisingState?() {}
+        }
+    }
+    
+    /**
+     read requestがあった時に呼ばれる
+     */
+    public func peripheralManager(peripheral: CBPeripheralManager, didReceiveReadRequest request: CBATTRequest) {
+        request.value = self.characteristic.value
+        //リクエストに応答
+        self.peripheralManager.respondToRequest(
+            request,
+            withResult: CBATTError.Success
+        )
+    }
+    
+    /**
+     write requestがあった時に呼ばれる
+     */
+    public func peripheralManager(peripheral: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
+        for obj in requests {
+            if let request = obj as CBATTRequest! {
+                self.characteristic.value = request.value
+                if let data = obj.characteristic.value {
+                    let out: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
+                    if let delegate = self.delegate {
+                        //値読込
+                        let receivedData: ReceivedData = ReceivedData()
+                        receivedData.data = out
+                        delegate.receivedData(receivedData)
+                    }
+                }
+            }
+        }
+        //リクエストに応答
+        self.peripheralManager.respondToRequest(requests[0] as CBATTRequest, withResult: CBATTError.Success)
+    }
+
+    //MARK: - CBPeripheralDelegate
+    
+    /**
+     service発見時に呼ばれる
+    */
     public func peripheral(peripheral: CBPeripheral, didDiscoverServices error: NSError?) {
         if let setting = streetPassSettings {
             if let services : [CBService] = peripheral.services {
                 for obj in services {
+                    //目的のサービスを提供していれば、キャラクタリスティック探索を開始
                     if obj.UUID.isEqual(setting.serviceUUID[0]) {
                         peripheral.discoverCharacteristics(setting.characteristicUUID, forService: obj)
                         break
@@ -235,11 +324,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     }
     
     /**
-     characteristicsが見つかったら、呼ばれるよ
-     
-     - parameter peripheral: peripheral description
-     - parameter service:    service description
-     - parameter error:      error description
+     characteristics発見時に呼ばれる
      */
     public func peripheral(peripheral: CBPeripheral, didDiscoverCharacteristicsForService service: CBService, error: NSError?) {
         if let setting = streetPassSettings {
@@ -255,11 +340,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
     }
     
     /**
-     characteristicが読み込まれるとここがよばれる
-     
-     - parameter peripheral:     <#peripheral description#>
-     - parameter characteristic: <#characteristic description#>
-     - parameter error:          <#error description#>
+     characteristic読み込み時に呼ばれる
      */
     public func peripheral(peripheral: CBPeripheral, didUpdateValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
         
@@ -282,100 +363,24 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
         }
         
         if let setting = streetPassSettings {
-            //送信
+            //peripheralに送信
             writeData(setting.sendData, periperal: peripheral)
         }
     }
     
     /**
-     write完了するとここがよばれる
-     
-     - parameter peripheral:     <#peripheral description#>
-     - parameter characteristic: <#characteristic description#>
-     - parameter error:          <#error description#>
+      write完了時に呼ばれる
      */
     public func peripheral(peripheral: CBPeripheral, didWriteValueForCharacteristic characteristic: CBCharacteristic, error: NSError?) {
         //接続切断
         centralManager.cancelPeripheralConnection(peripheral)
     }
     
-    /**
-     peripheralのserviceに追加された時
-     
-     - parameter peripheral: <#peripheral description#>
-     - parameter service:    <#service description#>
-     - parameter error:      <#error description#>
-     */
-    public func peripheralManager(peripheral: CBPeripheralManager, didAddService service: CBService, error: NSError?) {
-        if error != nil {
-            if let delegate = self.delegate {
-                delegate.streetPassError(error!)
-            }
-            return
-        }
-        if let delegate = self.delegate {
-            if let _ = delegate.peripheralDidAddService?() {}
-        }
-    }
+    //MARK: - Sub Methods
     
     /**
-     advertiseのステータス
-     
-     - parameter peripheral: <#peripheral description#>
+     write requestを発行する
      */
-    public func peripheralManagerDidUpdateState(peripheral: CBPeripheralManager) {
-        if let delegate = self.delegate {
-            CentralManager().setPeripheralState(delegate, peripheral: peripheral)
-        }
-        switch peripheral.state {
-        case .PoweredOn:
-            if let setting = self.streetPassSettings {
-                
-                let service = CBMutableService(type: setting.serviceUUID[0], primary: true)
-                let characteristic = CBMutableCharacteristic(
-                    type: setting.characteristicUUID[0],
-                    properties: [CBCharacteristicProperties.Read, CBCharacteristicProperties.Write],
-                    value: nil,
-                    permissions: [CBAttributePermissions.Readable, CBAttributePermissions.Writeable]
-                )
-                service.characteristics = [characteristic]
-                self.peripheralManager.addService(service)
-                
-                let initData: NSData! = setting.initData.dataUsingEncoding(NSUTF8StringEncoding)
-                characteristic.value = initData
-                self.characteristic = characteristic
-                
-                let advertiseData: [String : AnyObject] = [
-                    CBAdvertisementDataLocalNameKey: setting.advertisementDataLocalNameKey,
-                    CBAdvertisementDataServiceUUIDsKey: setting.serviceUUID
-                ]
-                
-                self.peripheralManager.startAdvertising(advertiseData)
-                
-            }
-        default:
-            break
-        }
-    }
-    
-    /**
-     advertiseが成功したか
-     
-     - parameter peripheral: <#peripheral description#>
-     - parameter error:      <#error description#>
-     */
-    @objc public func peripheralManagerDidStartAdvertising(peripheral: CBPeripheralManager, error: NSError?) {
-        if error != nil {
-            if let delegate = self.delegate {
-                delegate.streetPassError(error!)
-            }
-            return
-        }
-        if let delegate = self.delegate {
-            if let _ = delegate.advertisingState?() {}
-        }
-    }
-    
     public func writeData(data: String, periperal: CBPeripheral) {
         if let sendData: NSData = data.dataUsingEncoding(NSUTF8StringEncoding) {
             if let services : [CBService] = peripheral.services {
@@ -383,6 +388,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
                     if let characteristics: [CBCharacteristic] = service.characteristics {
                         for characteristic in characteristics {
                             if characteristic.UUID.isEqual(self.characteristic.UUID) {
+                                //peripheralに情報を送る
                                 peripheral.writeValue(
                                     sendData,
                                     forCharacteristic: characteristic,
@@ -394,35 +400,6 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
                 }
             }
         }
-    }
-    
-    public func peripheralManager(peripheral: CBPeripheralManager, didReceiveReadRequest request: CBATTRequest) {
-        request.value = self.characteristic.value
-        self.peripheralManager.respondToRequest(
-            request,
-            withResult: CBATTError.Success
-        )
-    }
-    
-    public func peripheralManager(peripheral: CBPeripheralManager, didReceiveWriteRequests requests: [CBATTRequest]) {
-        
-        for obj in requests {
-            if let request = obj as CBATTRequest! {
-                self.characteristic.value = request.value
-                if let data = obj.characteristic.value {
-                    let out: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
-                    if let delegate = self.delegate {
-                        //値読込
-                        let receivedData: ReceivedData = ReceivedData()
-                        receivedData.data = out
-                        delegate.receivedData(receivedData)
-                    }
-                }
-            }
-        }
-        
-        self.peripheralManager.respondToRequest(requests[0] as CBATTRequest, withResult: CBATTError.Success)
-        
     }
     
 }

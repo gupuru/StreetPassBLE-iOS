@@ -40,7 +40,7 @@ import CoreBluetooth
 }
 
 /**
- 受信した情報
+ 受信したデータ
  */
 @objc public class ReceivedData : NSObject {
     
@@ -51,9 +51,9 @@ import CoreBluetooth
         super.init()
     }
     
-    public var data: String {
+    public var data: String? {
         get {
-            return _data!
+            return _data
         }
         
         set(data) {
@@ -61,9 +61,9 @@ import CoreBluetooth
         }
     }
     
-    public var peripheral : CBPeripheral {
+    public var peripheral : CBPeripheral? {
         get {
-            return _peripheral!
+            return _peripheral
         }
         
         set(peripheral) {
@@ -74,7 +74,7 @@ import CoreBluetooth
 }
 
 /**
- 接続した端末情報
+ 接続した端末
  */
 @objc public class ConnectedDeviceInfo : NSObject {
     
@@ -85,9 +85,9 @@ import CoreBluetooth
         super.init()
     }
     
-    public var status : ConnectedDeviceStatus {
+    public var status : ConnectedDeviceStatus? {
         get {
-            return _status!
+            return _status
         }
         
         set(status) {
@@ -95,9 +95,9 @@ import CoreBluetooth
         }
     }
     
-    public var peripheral : CBPeripheral {
+    public var peripheral : CBPeripheral? {
         get {
-            return _peripheral!
+            return _peripheral
         }
         
         set(peripheral) {
@@ -122,9 +122,9 @@ import CoreBluetooth
     
     public var deviceName : String = ""
     
-    public var peripheral : CBPeripheral {
+    public var peripheral : CBPeripheral? {
         get {
-            return _peripheral!
+            return _peripheral
         }
         
         set(peripheral) {
@@ -132,22 +132,24 @@ import CoreBluetooth
         }
     }
     
-    public var advertisementData : [String : AnyObject] {
+    public var advertisementData : [String : AnyObject]? {
         get {
-            return _advertisementData!
+            return _advertisementData
         }
         
         set(advertisementData) {
             _advertisementData = advertisementData
-            if let name = advertisementData["kCBAdvDataLocalName"] as? String {
-                deviceName = name
+            if let data = advertisementData {
+                if let name = data["kCBAdvDataLocalName"] as? String {
+                    deviceName = name
+                }
             }
         }
     }
     
-    public var RSSI : NSNumber {
+    public var RSSI : NSNumber? {
         get {
-            return _RSSI!
+            return _RSSI
         }
         
         set(RSSI) {
@@ -157,8 +159,14 @@ import CoreBluetooth
 
 }
 
+/**
+ Central, Peripheral状態変化
+ */
 internal class CentralManager : NSObject {
     
+    /**
+     centralの状態変化
+     */
     internal func setCentralState(delegate: StreetPassDelegate, central: CBCentralManager) {
         switch central.state {
         case .Unknown:
@@ -176,6 +184,9 @@ internal class CentralManager : NSObject {
         }
     }
     
+    /**
+     Peripheralの状態変化
+     */
     internal func setPeripheralState(delegate: StreetPassDelegate, peripheral: CBPeripheralManager) {
         switch peripheral.state {
         case .Unknown:
@@ -194,5 +205,3 @@ internal class CentralManager : NSObject {
     }
     
 }
-
-

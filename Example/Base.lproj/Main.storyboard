@@ -6,7 +6,7 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--StreetPassBLE-->
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="Example" customModuleProvider="target" sceneMemberID="viewController">
@@ -18,67 +18,76 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6bi-5D-FTk">
-                                <rect key="frame" x="25" y="134" width="180" height="40"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6bi-5D-FTk" customClass="CustomButton" customModule="Example" customModuleProvider="target">
+                                <rect key="frame" x="25" y="139" width="550" height="40"/>
+                                <color key="backgroundColor" red="0.34901960780000002" green="0.81960784310000001" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="180" id="2Xa-Qy-r47"/>
-                                    <constraint firstAttribute="height" constant="40" id="gQg-Ye-xdh"/>
+                                    <constraint firstAttribute="height" constant="40" id="KXd-fl-2Mh"/>
                                 </constraints>
-                                <state key="normal" title="Start"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
+                                <inset key="contentEdgeInsets" minX="50" minY="0.0" maxX="50" maxY="0.0"/>
+                                <state key="normal" title="Start">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="boolean" keyPath="exclusiveTouch" value="YES"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="0.0"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="4"/>
+                                    </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                                 <connections>
-                                    <action selector="onTouchUpInsideStartButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="GSY-bb-GZk"/>
+                                    <action selector="onTouchUpInsideStartStopButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="l3C-WX-YhS"/>
                                 </connections>
                             </button>
-                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="oOd-Ua-ldq">
-                                <rect key="frame" x="25" y="74" width="550" height="30"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Please write something." textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="oOd-Ua-ldq" customClass="CustomTextFeild" customModule="Example" customModuleProvider="target">
+                                <rect key="frame" x="25" y="84" width="550" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="Q0j-8Y-uw9"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
+                                        <color key="value" red="0.34901960780000002" green="0.81960784310000001" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="borderWidth">
+                                        <real key="value" value="1"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                        <real key="value" value="5"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                             </textField>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S0I-c3-gKz">
-                                <rect key="frame" x="395" y="134" width="180" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="180" id="Yzg-iu-egO"/>
-                                    <constraint firstAttribute="height" constant="40" id="xRG-4N-8qr"/>
-                                </constraints>
-                                <state key="normal" title="Stop"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="boolean" keyPath="exclusiveTouch" value="YES"/>
-                                </userDefinedRuntimeAttributes>
-                                <connections>
-                                    <action selector="onTouchUpInsideStopButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="QbJ-0T-3VZ"/>
-                                </connections>
-                            </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Status hear" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="hGK-tk-auW">
-                                <rect key="frame" x="25" y="204" width="550" height="391"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="Status hear" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="hGK-tk-auW">
+                                <rect key="frame" x="25" y="209" width="550" height="386"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <color key="textColor" red="0.34901960780000002" green="0.81960784310000001" blue="0.2901960784" alpha="1" colorSpace="calibratedRGB"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="S0I-c3-gKz" secondAttribute="trailing" constant="5" id="3Bz-Eg-PvG"/>
-                            <constraint firstItem="oOd-Ua-ldq" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="10" id="3hx-JH-fqA"/>
-                            <constraint firstItem="6bi-5D-FTk" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="5" id="5bu-N0-CgI"/>
-                            <constraint firstAttribute="trailing" secondItem="hGK-tk-auW" secondAttribute="trailing" constant="25" id="5cp-TA-hpC"/>
-                            <constraint firstItem="hGK-tk-auW" firstAttribute="top" secondItem="S0I-c3-gKz" secondAttribute="bottom" constant="30" id="Ojv-58-IYt"/>
-                            <constraint firstItem="S0I-c3-gKz" firstAttribute="top" secondItem="oOd-Ua-ldq" secondAttribute="bottom" constant="30" id="PnK-U1-UcZ"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="hGK-tk-auW" secondAttribute="bottom" constant="5" id="QNl-oo-5ye"/>
-                            <constraint firstItem="6bi-5D-FTk" firstAttribute="top" secondItem="oOd-Ua-ldq" secondAttribute="bottom" constant="30" id="chm-K0-CUV"/>
+                            <constraint firstItem="oOd-Ua-ldq" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="3hx-JH-fqA"/>
+                            <constraint firstItem="hGK-tk-auW" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="5" id="IPk-Gh-vea"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="6bi-5D-FTk" secondAttribute="trailing" constant="5" id="XHG-aM-zTz"/>
+                            <constraint firstItem="6bi-5D-FTk" firstAttribute="top" secondItem="oOd-Ua-ldq" secondAttribute="bottom" constant="15" id="azs-zh-gl4"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="hGK-tk-auW" secondAttribute="trailing" constant="5" id="cDN-cJ-aMN"/>
                             <constraint firstItem="oOd-Ua-ldq" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="5" id="cjN-f3-PnK"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="hGK-tk-auW" secondAttribute="bottom" constant="5" id="dQx-Wv-BoG"/>
+                            <constraint firstItem="hGK-tk-auW" firstAttribute="top" secondItem="6bi-5D-FTk" secondAttribute="bottom" constant="30" id="hTf-bd-rxG"/>
                             <constraint firstAttribute="trailingMargin" secondItem="oOd-Ua-ldq" secondAttribute="trailing" constant="5" id="hgv-Dc-mMs"/>
-                            <constraint firstItem="hGK-tk-auW" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="25" id="zWs-8P-ycS"/>
+                            <constraint firstItem="6bi-5D-FTk" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="5" id="jA4-Zj-fzd"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="i7x-zz-NdV"/>
+                    <navigationItem key="navigationItem" title="StreetPassBLE" id="i7x-zz-NdV"/>
                     <connections>
                         <outlet property="logTextView" destination="hGK-tk-auW" id="I68-2T-HPo"/>
                         <outlet property="nameTextField" destination="oOd-Ua-ldq" id="hPQ-Dz-9hY"/>
-                        <outlet property="startUIButton" destination="6bi-5D-FTk" id="YUq-CT-JFw"/>
-                        <outlet property="stopUiButton" destination="S0I-c3-gKz" id="4ox-k2-H8x"/>
+                        <outlet property="startStopUIButton" destination="6bi-5D-FTk" id="8G4-Rs-Dkq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -93,6 +102,10 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="wzg-bK-wql">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="barTintColor" red="0.34901960784313724" green="0.81960784313725488" blue="0.29019607843137257" alpha="1" colorSpace="calibratedRGB"/>
+                        <textAttributes key="titleTextAttributes">
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </textAttributes>
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>

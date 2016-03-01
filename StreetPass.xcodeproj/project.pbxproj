@@ -20,6 +20,9 @@
 		553184471C7BF4420011D26D /* StreetPass.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 553184161C7BF3C90011D26D /* StreetPass.framework */; };
 		553184481C7BF4420011D26D /* StreetPass.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 553184161C7BF3C90011D26D /* StreetPass.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		55411A5F1C7EDF69005C78C6 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55411A5E1C7EDF69005C78C6 /* Manager.swift */; };
+		55EFF0D91C853059008B14D2 /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFF0D81C853059008B14D2 /* CustomButton.swift */; };
+		55EFF0DC1C853A02008B14D2 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFF0DB1C853A02008B14D2 /* Color.swift */; };
+		55EFF0DE1C854149008B14D2 /* CustomTextFeild.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55EFF0DD1C854149008B14D2 /* CustomTextFeild.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +74,9 @@
 		5531843E1C7BF4300011D26D /* ExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleUITests.swift; sourceTree = "<group>"; };
 		553184401C7BF4300011D26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		55411A5E1C7EDF69005C78C6 /* Manager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
+		55EFF0D81C853059008B14D2 /* CustomButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
+		55EFF0DB1C853A02008B14D2 /* Color.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		55EFF0DD1C854149008B14D2 /* CustomTextFeild.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTextFeild.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +141,7 @@
 		553184281C7BF4300011D26D /* Example */ = {
 			isa = PBXGroup;
 			children = (
+				55EFF0DA1C8539D1008B14D2 /* ui */,
 				553184291C7BF4300011D26D /* AppDelegate.swift */,
 				5531842B1C7BF4300011D26D /* ViewController.swift */,
 				5531842D1C7BF4300011D26D /* Main.storyboard */,
@@ -152,6 +159,16 @@
 				553184401C7BF4300011D26D /* Info.plist */,
 			);
 			path = ExampleUITests;
+			sourceTree = "<group>";
+		};
+		55EFF0DA1C8539D1008B14D2 /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				55EFF0D81C853059008B14D2 /* CustomButton.swift */,
+				55EFF0DB1C853A02008B14D2 /* Color.swift */,
+				55EFF0DD1C854149008B14D2 /* CustomTextFeild.swift */,
+			);
+			name = ui;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -310,7 +327,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				5531842C1C7BF4300011D26D /* ViewController.swift in Sources */,
+				55EFF0DC1C853A02008B14D2 /* Color.swift in Sources */,
 				5531842A1C7BF4300011D26D /* AppDelegate.swift in Sources */,
+				55EFF0DE1C854149008B14D2 /* CustomTextFeild.swift in Sources */,
+				55EFF0D91C853059008B14D2 /* CustomButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
