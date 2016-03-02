@@ -1,6 +1,8 @@
+![header](Assets/icon.png)
+
 # StreetPassBLE すれ違い通信
 
-** すれ違い通信のiOSライブラリ **
+**すれ違い通信のiOSライブラリ**
 
 すれ違い通信については、[こちら](https://ja.wikipedia.org/wiki/%E3%81%99%E3%82%8C%E3%81%A1%E3%81%8C%E3%81%84%E9%80%9A%E4%BF%A1)を参照してください。
 
@@ -8,11 +10,13 @@
 １００バイト程度の送受信が可能です。
 8.0以上での動作を確認しています。
 
-** ※現在、開発中ですので、正常に動作しないことがあります。 **
+**※現在、開発中ですので、正常に動作しないことがあります。**
+
+![Animation](Assets/demo.gif)
 
 # 導入方法
 
-```
+``` ruby
 pod 'StreetPass', :git => 'https://github.com/gupuru/StreetPassBLE-iOS.git'
 ```
 
@@ -20,7 +24,7 @@ pod 'StreetPass', :git => 'https://github.com/gupuru/StreetPassBLE-iOS.git'
 
 info.plistに以下を追加してください。
 
-```
+``` xml
 <key>Required background modes</key>
   <array>
        <string>App communicates using CoreBluetooth</string>
@@ -33,7 +37,7 @@ info.plistに以下を追加してください。
 終了する際は、必ず「stop」を読んで下さい。
 
 
-```
+``` swift
 class ViewController: UIViewController, StreetPassDelegate {
 
 let street: StreetPass = StreetPass()
