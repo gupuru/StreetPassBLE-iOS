@@ -42,6 +42,7 @@ class ViewController: UIViewController, StreetPassDelegate, UITextFieldDelegate 
             startStopUIButton.backgroundColor = Color().stop()
             logTextView.text = ""
             setLogText("Start StreetPass")
+            view.endEditing(true)
             //textfieldに入っている文言取得
             var sendData: String = ""
             if nameTextField.text != nil {
@@ -118,13 +119,16 @@ class ViewController: UIViewController, StreetPassDelegate, UITextFieldDelegate 
     }
     
     func receivedData(receivedData: ReceivedData) {
-        setLogText("Receive Data: \(receivedData.data)")
-        // Notificationの生成する
-        let myNotification: UILocalNotification = UILocalNotification()
-        myNotification.alertBody = receivedData.data
-        myNotification.fireDate = NSDate(timeIntervalSinceNow: 1)
-        myNotification.timeZone = NSTimeZone.defaultTimeZone()
-        UIApplication.sharedApplication().scheduleLocalNotification(myNotification)
+        if let data = receivedData.data {
+            setLogText("Receive Data: \(data)")
+            // Notificationの生成する
+            let myNotification: UILocalNotification = UILocalNotification()
+            myNotification.alertBody = data
+            myNotification.fireDate = NSDate(timeIntervalSinceNow: 1)
+            myNotification.timeZone = NSTimeZone.defaultTimeZone()
+            UIApplication.sharedApplication().scheduleLocalNotification(myNotification)
+
+        }
     }
     
     //MARK: - UITextFieldDelegate
