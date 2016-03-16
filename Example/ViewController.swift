@@ -28,6 +28,10 @@ class ViewController: UIViewController, StreetPassDelegate, UITextFieldDelegate 
         //delegateなど
         street.delegate = self
         nameTextField.delegate = self
+        
+        if (true) {
+            print("swiftLintの導入テスト")
+        }
     }
     
     override func didReceiveMemoryWarning() {
