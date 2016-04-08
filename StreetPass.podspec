@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name                  = "StreetPass"
-  s.version               = "0.0.1"
+  s.version               = "0.1.0"
   s.summary               = "StreetPass library."
   s.homepage              = "https://github.com/gupuru/StreetPassBLE-iOS"
   s.license               = { :type => "MIT", :file => "LICENSE" }
