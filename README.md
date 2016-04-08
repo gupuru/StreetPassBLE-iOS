@@ -1,4 +1,4 @@
-![header](Assets/icon.png)
+![header](https://raw.githubusercontent.com/gupuru/StreetPassBLE-iOS/assets/icon.png)
 
 # StreetPassBLE すれ違い通信
 
@@ -10,9 +10,9 @@
 １００バイト程度の送受信が可能です。
 8.0以上での動作を確認しています。
 
-**※現在、開発中ですので、正常に動作しないことがあります。**
+質問やご要望がある場合は、[こちら](https://github.com/gupuru/StreetPassBLE-iOS/issues/8)までお願いします。
 
-![Animation](Assets/demo.gif)
+![Animation](https://raw.githubusercontent.com/gupuru/StreetPassBLE-iOS/assets/demo.gif)
 
 # 導入方法
 
