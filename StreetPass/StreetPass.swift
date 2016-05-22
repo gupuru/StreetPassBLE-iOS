@@ -58,6 +58,12 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
      停止
      */
     public func stop() {
+        if !peripherals.isEmpty {
+            for peripheral in peripherals {
+                centralManager.cancelPeripheralConnection(peripheral)
+            }
+            peripherals.removeAll()
+        }
         if let central = self.centralManager {
             central.stopScan()
             self.centralManager = nil
@@ -68,9 +74,6 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
             }
             peripheral.removeAllServices()
             self.peripheralManager = nil
-        }
-        if !peripherals.isEmpty {
-            peripherals.removeAll()
         }
     }
     
@@ -158,7 +161,7 @@ public class StreetPass: NSObject, CBCentralManagerDelegate, CBPeripheralManager
             deviceInfo.advertisementData = advertisementData
             deviceInfo.RSSI = RSSI
             
-            delegate.nearByDevices(deviceInfo)
+            if let _ = delegate.nearByDevices?(deviceInfo){}
             
         }
         if let setting = self.streetPassSettings {
