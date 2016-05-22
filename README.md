@@ -2,27 +2,33 @@
 
 # StreetPassBLE すれ違い通信
 
-**すれ違い通信のiOSライブラリ**
+**iOS's StreetPass Communication library**
 
-すれ違い通信については、[こちら](https://ja.wikipedia.org/wiki/%E3%81%99%E3%82%8C%E3%81%A1%E3%81%8C%E3%81%84%E9%80%9A%E4%BF%A1)を参照してください。
+## What is StreetPass Communication?
 
-端末同士がすれ違った時にデータ交換します。
-１００バイト程度の送受信が可能です。
-8.1以上での動作を確認しています。
+StreetPass is a Nintendo 3DS functionality which allows passive communication between Nintendo 3DS systems held by users in close proximity, an example being the sharing of Mii avatars in the StreetPass Mii Plaza application, and other game data. New data received from StreetPass is indicated via a green status light on the system.
 
-質問やご要望がある場合は、[こちら](https://github.com/gupuru/StreetPassBLE-iOS/issues/8)までお願いします。
+[Wiki](https://en.wikipedia.org/wiki/SpotPass_and_StreetPass)
+
+## About this library
+
+When the terminal with each other has become close to, it is capable of transmitting and receiving data of about 100 bytes.
+
+8.1 is available in more than.
+
+Questions and requests is [here](https://github.com/gupuru/StreetPassBLE-iOS/issues/8).
 
 ![Animation](https://raw.githubusercontent.com/gupuru/StreetPassBLE-iOS/assets/demo.gif)
 
-# 導入方法
+## CocoaPods
 
 ``` ruby
 pod 'StreetPass'
 ```
 
-# 使い方
+## Usage
 
-info.plistに以下を追加してください。
+Please add the following to the `info.plist`.
 
 ``` xml
 <key>Required background modes</key>
@@ -32,10 +38,57 @@ info.plistに以下を追加してください。
   </array>
 ```
 
-「start」で通信を開始します。
+### Start StreetPass
 
-終了する際は、必ず「stop」を読んで下さい。
+```swift
+let street: StreetPass = StreetPass()
+street.start()
+```
 
+### Settings
+
+- UUID
+- Transmitted data
+
+```swift
+let street: StreetPass = StreetPass()
+
+let streetPassSettings: StreetPassSettings = StreetPassSettings()
+                .sendData(sendData)
+                .allowDuplicates(false)
+                .isConnect(true)
+      
+street.start(streetPassSettings)
+```
+
+### Stop StreetPass
+
+Please stop sure.
+
+```swift
+let street: StreetPass = StreetPass()
+street.stop()
+```
+
+### Delegate
+
+Received data.
+
+```swift
+func receivedData(receivedData: ReceivedData) {
+  //received data
+}
+```
+
+Error
+
+```swift
+func streetPassError(error: NSError) {
+  //error
+}
+```
+
+### Sample
 
 ``` swift
 class ViewController: UIViewController, StreetPassDelegate {
@@ -46,23 +99,23 @@ override func viewDidLoad() {
   super.viewDidLoad()
 
   street.delegate = self
-  //開始
+  //start
   street.start()
 }
 
 override func viewDidDisappear(animated: Bool) {
      super.viewDidDisappear(animated)
 
-     //停止
+     //stop
      street.stop()
 }
 
 func streetPassError(error: NSError) {
-  //エラー
+  //error
 }
 
 func receivedData(receivedData: ReceivedData) {
-  //受信データ
+  //received data
 }
 ```
 
