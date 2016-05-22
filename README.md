@@ -8,7 +8,7 @@
 
 端末同士がすれ違った時にデータ交換します。
 １００バイト程度の送受信が可能です。
-8.0以上での動作を確認しています。
+8.1以上での動作を確認しています。
 
 質問やご要望がある場合は、[こちら](https://github.com/gupuru/StreetPassBLE-iOS/issues/8)までお願いします。
 
@@ -17,7 +17,7 @@
 # 導入方法
 
 ``` ruby
-pod 'StreetPass', :git => 'https://github.com/gupuru/StreetPassBLE-iOS.git'
+pod 'StreetPass'
 ```
 
 # 使い方
@@ -59,10 +59,6 @@ override func viewDidDisappear(animated: Bool) {
 
 func streetPassError(error: NSError) {
   //エラー
-}
-
-func nearByDevices(deveiceInfo: DeveiceInfo) {
-  //受信端末
 }
 
 func receivedData(receivedData: ReceivedData) {
