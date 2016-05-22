@@ -10,8 +10,8 @@ import Foundation
 
 @objc public protocol StreetPassDelegate {
     func streetPassError(error: NSError)
-    func nearByDevices(deveiceInfo: DeveiceInfo)
     func receivedData(receivedData: ReceivedData)
+    optional func nearByDevices(deveiceInfo: DeveiceInfo)
     optional func centralManagerState(state: CentralManagerState)
     optional func peripheralManagerState(state: PeripheralManagerState)
     optional func advertisingState()
