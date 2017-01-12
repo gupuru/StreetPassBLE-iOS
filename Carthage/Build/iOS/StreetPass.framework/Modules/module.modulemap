@@ -1,0 +1,10 @@
+framework module StreetPass {
+  umbrella header "StreetPass.h"
+
+  export *
+  module * { export * }
+}
+
+module StreetPass.Swift {
+    header "StreetPass-Swift.h"
+}

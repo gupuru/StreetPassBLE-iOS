@@ -26,6 +26,14 @@ Questions and requests is [here](https://github.com/gupuru/StreetPassBLE-iOS/iss
 pod 'StreetPass'
 ```
 
+## Carthage
+
+```
+github "gupuru/StreetPassBLE-iOS"
+```
+
+Run `carthage update` to build the framework and drag the built StreetPass.framework into your Xcode project.
+
 ## Usage
 
 Please add the following to the `info.plist`.
