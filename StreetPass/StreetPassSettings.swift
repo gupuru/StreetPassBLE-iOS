@@ -9,15 +9,15 @@
 import Foundation
 import CoreBluetooth
 
-public class StreetPassSettings {
+open class StreetPassSettings {
     
-    private var _serviceUUID: [CBUUID] = [CBUUID(string: "0000180A-0000-1000-8000-00805F9B34FB")]
-    private var _writeCharacteristicUUID: [CBUUID] = [CBUUID(string: "0C136FCC-3381-4F1E-9602-E2A3F8B70CEB")]
-    private var _readCharacteristicUUID: [CBUUID] = [CBUUID(string: "1BE31CB9-9E07-4892-AA26-30E87ABE9F70")]
-    private var _allowDuplicates: Bool = false
-    private var _sendData: String = ""
-    private var _advertisementDataLocalNameKey: String = "iOS"
-    private var _isConnect: Bool = false
+    fileprivate var _serviceUUID: [CBUUID] = [CBUUID(string: "0000180A-0000-1000-8000-00805F9B34FB")]
+    fileprivate var _writeCharacteristicUUID: [CBUUID] = [CBUUID(string: "0C136FCC-3381-4F1E-9602-E2A3F8B70CEB")]
+    fileprivate var _readCharacteristicUUID: [CBUUID] = [CBUUID(string: "1BE31CB9-9E07-4892-AA26-30E87ABE9F70")]
+    fileprivate var _allowDuplicates: Bool = false
+    fileprivate var _sendData: String = ""
+    fileprivate var _advertisementDataLocalNameKey: String = "iOS"
+    fileprivate var _isConnect: Bool = false
 
     public init() {
     }
@@ -92,43 +92,43 @@ public class StreetPassSettings {
         }
     }
     
-    public func serviceUUID(serviceUUID: String) -> Self {
+    open func serviceUUID(_ serviceUUID: String) -> Self {
         self.serviceUUID = [
             CBUUID(string: serviceUUID)
         ]
         return self
     }
     
-    public func writeCharacteristicUUID(writeCharacteristicUUID: String) -> Self {
+    open func writeCharacteristicUUID(_ writeCharacteristicUUID: String) -> Self {
         self.writeCharacteristicUUID = [
             CBUUID(string: writeCharacteristicUUID)
         ]
         return self
     }
     
-    public func readCharacteristicUUID(readCharacteristicUUID: String) -> Self {
+    open func readCharacteristicUUID(_ readCharacteristicUUID: String) -> Self {
         self.readCharacteristicUUID = [
             CBUUID(string: readCharacteristicUUID)
         ]
         return self
     }
     
-    public func allowDuplicates(allowDuplicates: Bool) -> Self {
+    open func allowDuplicates(_ allowDuplicates: Bool) -> Self {
         self.allowDuplicates = allowDuplicates
         return self
     }
     
-    public func sendData(sendData: String) -> Self {
+    open func sendData(_ sendData: String) -> Self {
         self.sendData = sendData
         return self
     }
     
-    public func advertisementDataLocalNameKey(advertisementDataLocalNameKey: String) -> Self {
+    open func advertisementDataLocalNameKey(_ advertisementDataLocalNameKey: String) -> Self {
         self.advertisementDataLocalNameKey = advertisementDataLocalNameKey
         return self
     }
     
-    public func isConnect(isConnect : Bool) -> Self {
+    open func isConnect(_ isConnect : Bool) -> Self {
         self.isConnect = isConnect
         return self
     }

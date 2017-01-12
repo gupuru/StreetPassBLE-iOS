@@ -11,38 +11,38 @@ import CoreBluetooth
 
 @objc public enum CentralManagerState : Int {
     
-    case Unknown
-    case Resetting
-    case Unsupported
-    case Unauthorized
-    case PoweredOff
-    case PoweredOn
+    case unknown
+    case resetting
+    case unsupported
+    case unauthorized
+    case poweredOff
+    case poweredOn
     
 }
 
 @objc public enum PeripheralManagerState : Int {
     
-    case Unknown
-    case Resetting
-    case Unsupported
-    case Unauthorized
-    case PoweredOff
-    case PoweredOn
+    case unknown
+    case resetting
+    case unsupported
+    case unauthorized
+    case poweredOff
+    case poweredOn
     
 }
 
 @objc public enum ConnectedDeviceStatus : Int {
     
-    case Success
-    case DisConected
-    case Failure
+    case success
+    case disConected
+    case failure
     
 }
 
 /**
  受信したデータ
  */
-@objc public class ReceivedData : NSObject {
+@objc open class ReceivedData : NSObject {
     
     var _data : String?
     var _peripheral : CBPeripheral?
@@ -51,7 +51,7 @@ import CoreBluetooth
         super.init()
     }
     
-    public var data: String? {
+    open var data: String? {
         get {
             return _data
         }
@@ -61,7 +61,7 @@ import CoreBluetooth
         }
     }
     
-    public var peripheral : CBPeripheral? {
+    open var peripheral : CBPeripheral? {
         get {
             return _peripheral
         }
@@ -76,7 +76,7 @@ import CoreBluetooth
 /**
  接続した端末
  */
-@objc public class ConnectedDeviceInfo : NSObject {
+@objc open class ConnectedDeviceInfo : NSObject {
     
     var _status : ConnectedDeviceStatus?
     var _peripheral : CBPeripheral?
@@ -85,7 +85,7 @@ import CoreBluetooth
         super.init()
     }
     
-    public var status : ConnectedDeviceStatus? {
+    open var status : ConnectedDeviceStatus? {
         get {
             return _status
         }
@@ -95,7 +95,7 @@ import CoreBluetooth
         }
     }
     
-    public var peripheral : CBPeripheral? {
+    open var peripheral : CBPeripheral? {
         get {
             return _peripheral
         }
@@ -110,7 +110,7 @@ import CoreBluetooth
 /**
  端末情報
  */
-@objc public class DeveiceInfo: NSObject {
+@objc open class DeveiceInfo: NSObject {
     
     var _peripheral : CBPeripheral?
     var _advertisementData : [String : AnyObject]?
@@ -120,9 +120,9 @@ import CoreBluetooth
         super.init()
     }
     
-    public var deviceName : String = ""
+    open var deviceName : String = ""
     
-    public var peripheral : CBPeripheral? {
+    open var peripheral : CBPeripheral? {
         get {
             return _peripheral
         }
@@ -132,7 +132,7 @@ import CoreBluetooth
         }
     }
     
-    public var advertisementData : [String : AnyObject]? {
+    open var advertisementData : [String : AnyObject]? {
         get {
             return _advertisementData
         }
@@ -147,7 +147,7 @@ import CoreBluetooth
         }
     }
     
-    public var RSSI : NSNumber? {
+    open var RSSI : NSNumber? {
         get {
             return _RSSI
         }
@@ -167,40 +167,40 @@ internal class CentralManager : NSObject {
     /**
      centralの状態変化
      */
-    internal func setCentralState(delegate: StreetPassDelegate, central: CBCentralManager) {
+    internal func setCentralState(_ delegate: StreetPassDelegate, central: CBCentralManager) {
         switch central.state {
-        case .Unknown:
-            if let _ = delegate.centralManagerState?(CentralManagerState.Unknown) {}
-        case .Resetting:
-            if let _ = delegate.centralManagerState?(CentralManagerState.Resetting) {}
-        case .Unsupported:
-            if let _ = delegate.centralManagerState?(CentralManagerState.Unsupported) {}
-        case .Unauthorized:
-            if let _ = delegate.centralManagerState?(CentralManagerState.Unauthorized) {}
-        case .PoweredOff:
-            if let _ = delegate.centralManagerState?(CentralManagerState.PoweredOff) {}
-        case .PoweredOn:
-            if let _ = delegate.centralManagerState?(CentralManagerState.PoweredOn) {}
+        case .unknown:
+            if let _ = delegate.centralManagerState?(CentralManagerState.unknown) {}
+        case .resetting:
+            if let _ = delegate.centralManagerState?(CentralManagerState.resetting) {}
+        case .unsupported:
+            if let _ = delegate.centralManagerState?(CentralManagerState.unsupported) {}
+        case .unauthorized:
+            if let _ = delegate.centralManagerState?(CentralManagerState.unauthorized) {}
+        case .poweredOff:
+            if let _ = delegate.centralManagerState?(CentralManagerState.poweredOff) {}
+        case .poweredOn:
+            if let _ = delegate.centralManagerState?(CentralManagerState.poweredOn) {}
         }
     }
     
     /**
      Peripheralの状態変化
      */
-    internal func setPeripheralState(delegate: StreetPassDelegate, peripheral: CBPeripheralManager) {
+    internal func setPeripheralState(_ delegate: StreetPassDelegate, peripheral: CBPeripheralManager) {
         switch peripheral.state {
-        case .Unknown:
-            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.Unknown) {}
-        case .Resetting:
-            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.Resetting) {}
-        case .Unsupported:
-            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.Unsupported) {}
-        case .Unauthorized:
-            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.Unauthorized) {}
-        case .PoweredOff:
-            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.PoweredOff) {}
-        case .PoweredOn:
-            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.PoweredOn) {}
+        case .unknown:
+            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.unknown) {}
+        case .resetting:
+            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.resetting) {}
+        case .unsupported:
+            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.unsupported) {}
+        case .unauthorized:
+            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.unauthorized) {}
+        case .poweredOff:
+            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.poweredOff) {}
+        case .poweredOn:
+            if let _ = delegate.peripheralManagerState?(PeripheralManagerState.poweredOn) {}
         }
     }
     
